@@ -1,6 +1,7 @@
 package lucasdev.com.veggievibes.domain.user;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,7 +35,8 @@ public class User {
     private boolean isEmailValidated;
 
     @Column(nullable = false)
-    private UserRole role;
+    @Pattern(regexp = "ADMIN|USER|SELLER")
+    private String role;
 
     @Column(name="created_at")
     private LocalDateTime createdAt;
