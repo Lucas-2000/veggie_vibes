@@ -2,6 +2,15 @@
 
 O Veggie Vibes é uma plataforma online dedicada a oferecer uma experiência de compras exclusiva para produtos veganos e vegetarianos. Projetado com o propósito de promover um estilo de vida saudável, ético e sustentável, o Veggie Vibes conecta vendedores comprometidos com a produção de alimentos livres de ingredientes de origem animal a consumidores conscientes em busca de opções de qualidade.
 
+## Tecnologias
+
+- Spring;
+- JUnit;
+- Mockito;
+- JPA;
+- Flyway;
+- Postgres;
+
 ## Requisitos Funcionais:
 - [ ] Cadastro de Usuários: Os usuários podem se cadastrar no Veggie Vibes fornecendo informações básicas como nome, endereço de e-mail e senha.
 
