@@ -5,13 +5,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lucasdev.com.veggievibes.dto.user.UserIdDTO;
 import lucasdev.com.veggievibes.dto.user.UserRequestDTO;
+import lucasdev.com.veggievibes.dto.user.UserResponseDTO;
 import lucasdev.com.veggievibes.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
@@ -34,5 +32,17 @@ public class UserController {
         var uri = UriComponentsBuilder.fromPath("/users/{id}").buildAndExpand(userIdDTO.userId()).toUri();
 
         return ResponseEntity.created(uri).body(userIdDTO);
+    }
+
+    @Operation(description = "Find User By Id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User Found"),
+            @ApiResponse(responseCode = "404", description = "User Not Found"),
+    })
+    @GetMapping("/{id}")
+    public ResponseEntity<UserResponseDTO> findUserBydId(@PathVariable String id) {
+        var user = this.userService.findUserById(id);
+
+        return ResponseEntity.ok(user);
     }
 }

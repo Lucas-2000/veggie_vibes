@@ -1,12 +1,10 @@
 package lucasdev.com.veggievibes.services;
 
 import lucasdev.com.veggievibes.domain.user.User;
-import lucasdev.com.veggievibes.domain.user.exceptions.EmailAlreadyExistsException;
-import lucasdev.com.veggievibes.domain.user.exceptions.InvalidRoleException;
-import lucasdev.com.veggievibes.domain.user.exceptions.ArePasswordAndRePasswordNotEqualException;
-import lucasdev.com.veggievibes.domain.user.exceptions.PasswordLengthException;
+import lucasdev.com.veggievibes.domain.user.exceptions.*;
 import lucasdev.com.veggievibes.dto.user.UserIdDTO;
 import lucasdev.com.veggievibes.dto.user.UserRequestDTO;
+import lucasdev.com.veggievibes.dto.user.UserResponseDTO;
 import lucasdev.com.veggievibes.repositories.UserRepository;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,5 +44,15 @@ public class UserService {
         this.userRepository.save(newUser);
 
         return new UserIdDTO(newUser.getId());
+    }
+
+    public UserResponseDTO findUserById(String id) {
+        var user = this.userRepository.findById(id);
+
+        if(!user.isPresent()) throw new UserNotFoundException("User not found");
+
+        UserResponseDTO userResponseDTO = new UserResponseDTO(user.get().getId(), user.get().getName(), user.get().getEmail(), user.get().isEmailValidated(), user.get().getRole());
+
+        return userResponseDTO;
     }
 }

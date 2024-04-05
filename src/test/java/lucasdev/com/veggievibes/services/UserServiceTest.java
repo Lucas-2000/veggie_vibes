@@ -1,10 +1,7 @@
 package lucasdev.com.veggievibes.services;
 
 import lucasdev.com.veggievibes.domain.user.User;
-import lucasdev.com.veggievibes.domain.user.exceptions.ArePasswordAndRePasswordNotEqualException;
-import lucasdev.com.veggievibes.domain.user.exceptions.EmailAlreadyExistsException;
-import lucasdev.com.veggievibes.domain.user.exceptions.InvalidRoleException;
-import lucasdev.com.veggievibes.domain.user.exceptions.PasswordLengthException;
+import lucasdev.com.veggievibes.domain.user.exceptions.*;
 import lucasdev.com.veggievibes.dto.user.UserRequestDTO;
 import lucasdev.com.veggievibes.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -38,6 +36,7 @@ public class UserServiceTest {
         MockitoAnnotations.initMocks(this);
 
         this.user = new User();
+        this.user.setId("1");
         this.user.setName("Lucas");
         this.user.setEmail("lucas@gmail.com");
         this.user.setPassword("12345678");
@@ -60,7 +59,7 @@ public class UserServiceTest {
         when(userRepository.findByEmail("lucas@gmail.com")).thenReturn(Optional.of(new User()));
 
         assertThrows(EmailAlreadyExistsException.class, () -> {
-            userService.create(this.userRequestDTO);
+            this.userService.create(this.userRequestDTO);
         });
     }
 
@@ -70,7 +69,7 @@ public class UserServiceTest {
         this.userRequestDTO = new UserRequestDTO(this.user.getName(), this.user.getEmail(), this.user.getPassword(), this.user.getPassword(), this.user.getRole());
 
         assertThrows(InvalidRoleException.class, () -> {
-            userService.create(this.userRequestDTO);
+            this.userService.create(this.userRequestDTO);
         });
     }
 
@@ -79,7 +78,7 @@ public class UserServiceTest {
         this.userRequestDTO = new UserRequestDTO(this.user.getName(), this.user.getEmail(), this.user.getPassword(), "123456789", this.user.getRole());
 
         assertThrows(ArePasswordAndRePasswordNotEqualException.class, () -> {
-            userService.create(this.userRequestDTO);
+            this.userService.create(this.userRequestDTO);
         });
     }
 
@@ -88,7 +87,23 @@ public class UserServiceTest {
         this.userRequestDTO = new UserRequestDTO(this.user.getName(), this.user.getEmail(), "1234567", "1234567", this.user.getRole());
 
         assertThrows(PasswordLengthException.class, () -> {
-            userService.create(this.userRequestDTO);
+            this.userService.create(this.userRequestDTO);
+        });
+    }
+
+    @Test
+    void shouldBeAbleToFindUserById() {
+        when(this.userRepository.findById("1")).thenReturn(Optional.of(user));
+
+        var result = userService.findUserById("1");
+
+        assertEquals(user.getId(), result.id());
+    }
+
+    @Test
+    void shouldThrowUserNotFoundException() {
+        assertThrows(UserNotFoundException.class, () -> {
+            this.userService.findUserById("teste");
         });
     }
 }

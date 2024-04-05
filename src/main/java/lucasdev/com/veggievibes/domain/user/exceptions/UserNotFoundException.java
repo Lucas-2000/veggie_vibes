@@ -1,0 +1,8 @@
+package lucasdev.com.veggievibes.domain.user.exceptions;
+
+public class UserNotFoundException extends RuntimeException {
+
+    public UserNotFoundException(String message) {
+        super(message);
+    }
+}

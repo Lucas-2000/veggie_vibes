@@ -1,9 +1,6 @@
 package lucasdev.com.veggievibes.config;
 
-import lucasdev.com.veggievibes.domain.user.exceptions.EmailAlreadyExistsException;
-import lucasdev.com.veggievibes.domain.user.exceptions.InvalidRoleException;
-import lucasdev.com.veggievibes.domain.user.exceptions.ArePasswordAndRePasswordNotEqualException;
-import lucasdev.com.veggievibes.domain.user.exceptions.PasswordLengthException;
+import lucasdev.com.veggievibes.domain.user.exceptions.*;
 import lucasdev.com.veggievibes.dto.general.ErrorResponseDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,5 +28,10 @@ public class ErrorHandler {
     @ExceptionHandler(InvalidRoleException.class)
     public ResponseEntity handleInvalidRole(InvalidRoleException exception) {
         return ResponseEntity.badRequest().body(new ErrorResponseDTO(exception.getMessage()));
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity handleUserNotFound(UserNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponseDTO(exception.getMessage()));
     }
 }
