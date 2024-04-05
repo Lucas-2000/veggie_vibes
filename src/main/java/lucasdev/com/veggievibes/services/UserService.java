@@ -79,4 +79,13 @@ public class UserService {
 
         return new UserIdDTO(id);
     }
+
+    @Transactional
+    public void delete(String id) {
+        var user = this.userRepository.findById(id);
+
+        if(!user.isPresent()) throw new UserNotFoundException("User not found");
+
+        this.userRepository.delete(user.get());
+    }
 }

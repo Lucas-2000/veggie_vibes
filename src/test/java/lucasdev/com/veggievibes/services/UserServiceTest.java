@@ -2,6 +2,7 @@ package lucasdev.com.veggievibes.services;
 
 import lucasdev.com.veggievibes.domain.user.User;
 import lucasdev.com.veggievibes.domain.user.exceptions.*;
+import lucasdev.com.veggievibes.dto.user.UserMessageDTO;
 import lucasdev.com.veggievibes.dto.user.UserRequestDTO;
 import lucasdev.com.veggievibes.dto.user.UserUpdateDTO;
 import lucasdev.com.veggievibes.repositories.UserRepository;
@@ -112,7 +113,6 @@ public class UserServiceTest {
         });
     }
 
-
     @Test
     void shouldBeAbleToUpdateUser() {
         when(this.userRepository.findById("1")).thenReturn(Optional.of(user));
@@ -124,5 +124,14 @@ public class UserServiceTest {
         assertEquals(user.getId(), result.userId());
 
         assertEquals(userUpdateDTO.name(), user.getName());
+    }
+
+    @Test
+    void shouldBeAbleToDeleteUser() {
+        when(this.userRepository.findById("1")).thenReturn(Optional.of(user));
+
+        this.userService.delete("1");
+
+        verify(userRepository).delete(user);
     }
 }

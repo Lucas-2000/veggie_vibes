@@ -3,10 +3,7 @@ package lucasdev.com.veggievibes.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import lucasdev.com.veggievibes.dto.user.UserIdDTO;
-import lucasdev.com.veggievibes.dto.user.UserRequestDTO;
-import lucasdev.com.veggievibes.dto.user.UserResponseDTO;
-import lucasdev.com.veggievibes.dto.user.UserUpdateDTO;
+import lucasdev.com.veggievibes.dto.user.*;
 import lucasdev.com.veggievibes.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +46,7 @@ public class UserController {
 
     @Operation(description = "Update user")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "User update succesfully"),
+            @ApiResponse(responseCode = "201", description = "User updated succesfully"),
             @ApiResponse(responseCode = "400", description = "Password and RePassword length must be higher than 7 characters | Password and RePassword must be equals"),
     })
     @PatchMapping("/{id}")
@@ -57,5 +54,19 @@ public class UserController {
         UserIdDTO userIdDTO = this.userService.update(id, userUpdateDTO);
 
         return ResponseEntity.ok(userIdDTO);
+    }
+
+    @Operation(description = "Delete User")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User deleted succesfully"),
+            @ApiResponse(responseCode = "404", description = "User Not Found"),
+    })
+    @DeleteMapping("/{id}")
+    public ResponseEntity<UserMessageDTO> deleteUser(@PathVariable String id) {
+        this.userService.delete(id);
+
+        UserMessageDTO userMessageDTO = new UserMessageDTO("User deleted succesfully");
+
+        return ResponseEntity.ok(userMessageDTO);
     }
 }
