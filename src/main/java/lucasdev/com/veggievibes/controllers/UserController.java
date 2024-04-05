@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lucasdev.com.veggievibes.dto.user.UserIdDTO;
 import lucasdev.com.veggievibes.dto.user.UserRequestDTO;
 import lucasdev.com.veggievibes.dto.user.UserResponseDTO;
+import lucasdev.com.veggievibes.dto.user.UserUpdateDTO;
 import lucasdev.com.veggievibes.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -44,5 +45,17 @@ public class UserController {
         var user = this.userService.findUserById(id);
 
         return ResponseEntity.ok(user);
+    }
+
+    @Operation(description = "Update user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "User update succesfully"),
+            @ApiResponse(responseCode = "400", description = "Password and RePassword length must be higher than 7 characters | Password and RePassword must be equals"),
+    })
+    @PatchMapping("/{id}")
+    public ResponseEntity<UserIdDTO> updateUser(@PathVariable String id, @RequestBody UserUpdateDTO userUpdateDTO) {
+        UserIdDTO userIdDTO = this.userService.update(id, userUpdateDTO);
+
+        return ResponseEntity.ok(userIdDTO);
     }
 }

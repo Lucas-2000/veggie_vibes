@@ -6,6 +6,7 @@ import lucasdev.com.veggievibes.domain.user.exceptions.EmailAlreadyExistsExcepti
 import lucasdev.com.veggievibes.dto.user.UserIdDTO;
 import lucasdev.com.veggievibes.dto.user.UserRequestDTO;
 import lucasdev.com.veggievibes.dto.user.UserResponseDTO;
+import lucasdev.com.veggievibes.dto.user.UserUpdateDTO;
 import lucasdev.com.veggievibes.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,8 +22,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,6 +45,8 @@ public class UserControllerTest {
 
     UserResponseDTO userResponseDTO;
 
+    UserUpdateDTO userUpdateDTO;
+
     @BeforeEach
     public void setup() {
         this.mockMvc = MockMvcBuilders.standaloneSetup(userController).alwaysDo(print()).build();
@@ -62,6 +64,8 @@ public class UserControllerTest {
         this.objectMapper = new ObjectMapper();
 
         this.userResponseDTO = new UserResponseDTO(this.user.getId(), this.user.getName(), this.user.getEmail(), this.user.isEmailValidated(), this.user.getRole());
+
+        this.userUpdateDTO = new UserUpdateDTO(this.user.getName(),this.user.getPassword(), this.user.getPassword());
     }
 
     @Test
@@ -83,6 +87,17 @@ public class UserControllerTest {
         this.mockMvc.perform(get("/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(this.userResponseDTO))
+                ).andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+    }
+
+    @Test
+    void UserController_UpdateUser_Return200() throws Exception {
+        when(userService.update("1", userUpdateDTO)).thenReturn(new UserIdDTO("1"));
+
+        this.mockMvc.perform(patch("/users/1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(userUpdateDTO))
                 ).andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
     }

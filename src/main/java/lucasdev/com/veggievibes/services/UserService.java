@@ -5,10 +5,12 @@ import lucasdev.com.veggievibes.domain.user.exceptions.*;
 import lucasdev.com.veggievibes.dto.user.UserIdDTO;
 import lucasdev.com.veggievibes.dto.user.UserRequestDTO;
 import lucasdev.com.veggievibes.dto.user.UserResponseDTO;
+import lucasdev.com.veggievibes.dto.user.UserUpdateDTO;
 import lucasdev.com.veggievibes.repositories.UserRepository;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +20,7 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Transactional
     public UserIdDTO create(UserRequestDTO userRequestDTO) {
         var emailExists = this.userRepository.findByEmail(userRequestDTO.email());
 
@@ -54,5 +57,26 @@ public class UserService {
         UserResponseDTO userResponseDTO = new UserResponseDTO(user.get().getId(), user.get().getName(), user.get().getEmail(), user.get().isEmailValidated(), user.get().getRole());
 
         return userResponseDTO;
+    }
+
+    @Transactional
+    public UserIdDTO update(String id, UserUpdateDTO userUpdateDTO) {
+        var user = this.userRepository.findById(id);
+
+        if(!user.isPresent()) throw new UserNotFoundException("User not found");
+
+        if(userUpdateDTO.password().length() < 8 || userUpdateDTO.rePassword().length() < 8) throw new PasswordLengthException("Password and RePassword length must be higher than 7 characters");
+
+        if (!userUpdateDTO.password().equals(userUpdateDTO.rePassword())) throw new ArePasswordAndRePasswordNotEqualException("Password and RePassword must be equals");
+
+        String hashedPassword = BCrypt.hashpw(userUpdateDTO.password(), BCrypt.gensalt());
+
+        user.get().setName(userUpdateDTO.name());
+        user.get().setPassword(hashedPassword);
+        user.get().setUpdatedAt(LocalDateTime.now());
+
+        this.userRepository.save(user.get());
+
+        return new UserIdDTO(id);
     }
 }

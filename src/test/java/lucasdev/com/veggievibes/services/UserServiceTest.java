@@ -3,6 +3,7 @@ package lucasdev.com.veggievibes.services;
 import lucasdev.com.veggievibes.domain.user.User;
 import lucasdev.com.veggievibes.domain.user.exceptions.*;
 import lucasdev.com.veggievibes.dto.user.UserRequestDTO;
+import lucasdev.com.veggievibes.dto.user.UserUpdateDTO;
 import lucasdev.com.veggievibes.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,8 @@ public class UserServiceTest {
 
     UserRequestDTO userRequestDTO;
 
+    UserUpdateDTO userUpdateDTO;
+
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
@@ -43,6 +46,8 @@ public class UserServiceTest {
         this.user.setRole("ADMIN");
 
         this.userRequestDTO = new UserRequestDTO(this.user.getName(), this.user.getEmail(), this.user.getPassword(), this.user.getPassword(), this.user.getRole());
+
+        this.userUpdateDTO = new UserUpdateDTO(this.user.getName(), this.user.getPassword(), this.user.getPassword());
     }
 
     @Test
@@ -105,5 +110,19 @@ public class UserServiceTest {
         assertThrows(UserNotFoundException.class, () -> {
             this.userService.findUserById("teste");
         });
+    }
+
+
+    @Test
+    void shouldBeAbleToUpdateUser() {
+        when(this.userRepository.findById("1")).thenReturn(Optional.of(user));
+
+        var result = userService.update("1", this.userUpdateDTO);
+
+        verify(userRepository).save(any(User.class));
+
+        assertEquals(user.getId(), result.userId());
+
+        assertEquals(userUpdateDTO.name(), user.getName());
     }
 }
