@@ -30,6 +30,11 @@ public class ErrorHandler {
         return ResponseEntity.badRequest().body(new ErrorResponseDTO(exception.getMessage()));
     }
 
+    @ExceptionHandler(IncorrectLoginException.class)
+    public ResponseEntity handleIncorrectLoginException(IncorrectLoginException exception) {
+        return ResponseEntity.badRequest().body(new ErrorResponseDTO(exception.getMessage()));
+    }
+
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity handleUserNotFound(UserNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponseDTO(exception.getMessage()));

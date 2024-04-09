@@ -23,7 +23,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Password and RePassword length must be higher than 7 characters | Password and RePassword must be equals | Invalid role"),
             @ApiResponse(responseCode = "409", description = "Email already exists"),
     })
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<UserIdDTO> createUser(@RequestBody UserRequestDTO userRequestDTO) {
         UserIdDTO userIdDTO = this.userService.create(userRequestDTO);
 
@@ -68,5 +68,18 @@ public class UserController {
         UserMessageDTO userMessageDTO = new UserMessageDTO("User deleted succesfully");
 
         return ResponseEntity.ok(userMessageDTO);
+    }
+
+
+    @Operation(description = "Login user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User logged succesfully"),
+            @ApiResponse(responseCode = "400", description = "Email and/or Password Incorrects"),
+    })
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginRequestDTO) {
+        LoginResponseDTO LoginResponseDTO = this.userService.login(loginRequestDTO);
+
+        return ResponseEntity.ok(LoginResponseDTO);
     }
 }

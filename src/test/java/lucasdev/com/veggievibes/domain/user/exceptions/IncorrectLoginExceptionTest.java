@@ -1,7 +1,7 @@
 package lucasdev.com.veggievibes.domain.user.exceptions;
 
 import lucasdev.com.veggievibes.domain.user.User;
-import lucasdev.com.veggievibes.dto.user.UserRequestDTO;
+import lucasdev.com.veggievibes.dto.user.LoginRequestDTO;
 import lucasdev.com.veggievibes.repositories.UserRepository;
 import lucasdev.com.veggievibes.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,13 +12,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class EmailAlreadyExistsExceptionTest {
+public class IncorrectLoginExceptionTest {
 
     @Mock
     private UserRepository userRepository;
@@ -28,27 +25,26 @@ public class EmailAlreadyExistsExceptionTest {
 
     User user;
 
-    UserRequestDTO userRequestDTO;
+
+    LoginRequestDTO loginRequestDTO;
 
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
         this.user = new User();
-        this.user.setName("Lucas");
         this.user.setEmail("lucas@gmail.com");
         this.user.setPassword("12345678");
-        this.user.setRole("ADMIN");
 
-        this.userRequestDTO = new UserRequestDTO(this.user.getName(), this.user.getEmail(), this.user.getPassword(), this.user.getPassword(), this.user.getRole());
+        this.loginRequestDTO = new LoginRequestDTO(this.user.getEmail(), this.user.getPassword());
     }
 
     @Test
-    void shouldNotBeAbleToCreateAnUserIfEmailAlreadyExists() {
-        when(userRepository.findByEmail("lucas@gmail.com")).thenReturn(Optional.of(user));
+    void shouldNotBeAbleToAuthAnUserIfEmaiOrPasswordAreIncorrect() {
+        this.loginRequestDTO = new LoginRequestDTO("teste", "1234");
 
-        assertThrows(EmailAlreadyExistsException.class, () -> {
-            userService.create(this.userRequestDTO);
+        assertThrows(IncorrectLoginException.class, () -> {
+            this.userService.login(this.loginRequestDTO);
         });
     }
 }

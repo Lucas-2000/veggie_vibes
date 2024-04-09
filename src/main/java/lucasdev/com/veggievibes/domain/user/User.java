@@ -35,7 +35,7 @@ public class User {
     private boolean isEmailValidated;
 
     @Column(nullable = false)
-    @Pattern(regexp = "ADMIN|USER|SELLER")
+    @Pattern(regexp = "ROLE_ADMIN|ROLE_USER|ROLE_SELLER")
     private String role;
 
     @Column(name="created_at")

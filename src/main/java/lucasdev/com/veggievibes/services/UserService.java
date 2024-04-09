@@ -2,10 +2,8 @@ package lucasdev.com.veggievibes.services;
 
 import lucasdev.com.veggievibes.domain.user.User;
 import lucasdev.com.veggievibes.domain.user.exceptions.*;
-import lucasdev.com.veggievibes.dto.user.UserIdDTO;
-import lucasdev.com.veggievibes.dto.user.UserRequestDTO;
-import lucasdev.com.veggievibes.dto.user.UserResponseDTO;
-import lucasdev.com.veggievibes.dto.user.UserUpdateDTO;
+import lucasdev.com.veggievibes.dto.user.*;
+import lucasdev.com.veggievibes.infra.security.TokenService;
 import lucasdev.com.veggievibes.repositories.UserRepository;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +17,9 @@ public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TokenService tokenService;
 
     @Transactional
     public UserIdDTO create(UserRequestDTO userRequestDTO) {
@@ -87,5 +88,15 @@ public class UserService {
         if(!user.isPresent()) throw new UserNotFoundException("User not found");
 
         this.userRepository.delete(user.get());
+    }
+
+    public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
+        User user = this.userRepository.findByEmail(loginRequestDTO.email()).orElseThrow(() -> new IncorrectLoginException("Email and/or Password Incorrects"));
+
+        if (!BCrypt.checkpw(loginRequestDTO.password(), user.getPassword())) throw new IncorrectLoginException("Email and/or Password Incorrects");
+
+        String token = this.tokenService.generateToken(user);
+
+        return new LoginResponseDTO(token);
     }
 }

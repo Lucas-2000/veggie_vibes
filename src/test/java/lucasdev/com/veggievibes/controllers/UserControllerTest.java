@@ -45,6 +45,8 @@ public class UserControllerTest {
 
     UserUpdateDTO userUpdateDTO;
 
+    LoginRequestDTO loginRequestDTO;
+
     UserMessageDTO userMessageDTO;
 
     @BeforeEach
@@ -67,6 +69,8 @@ public class UserControllerTest {
 
         this.userUpdateDTO = new UserUpdateDTO(this.user.getName(),this.user.getPassword(), this.user.getPassword());
 
+        this.loginRequestDTO = new LoginRequestDTO(this.user.getEmail(), this.user.getPassword());
+
         this.userMessageDTO = new UserMessageDTO(null);
     }
 
@@ -74,7 +78,7 @@ public class UserControllerTest {
     void UserController_CreateUser_Return201() throws Exception {
         when(this.userService.create(userRequestDTO)).thenReturn(new UserIdDTO("1"));
 
-        this.mockMvc.perform(post("/users")
+        this.mockMvc.perform(post("/users/register")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(this.objectMapper.writeValueAsString(userRequestDTO))
         ).andExpect(MockMvcResultMatchers.status().isCreated())
@@ -111,5 +115,16 @@ public class UserControllerTest {
         this.mockMvc.perform(delete("/users/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    void UserController_LoginUser_Return200() throws Exception {
+        when(this.userService.login(loginRequestDTO)).thenReturn(new LoginResponseDTO("token"));
+
+        this.mockMvc.perform(post("/users/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(this.objectMapper.writeValueAsString(this.loginRequestDTO))
+                ).andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
     }
 }

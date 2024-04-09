@@ -2,13 +2,13 @@ package lucasdev.com.veggievibes.services;
 
 import lucasdev.com.veggievibes.domain.user.User;
 import lucasdev.com.veggievibes.domain.user.exceptions.*;
-import lucasdev.com.veggievibes.dto.user.UserMessageDTO;
-import lucasdev.com.veggievibes.dto.user.UserRequestDTO;
-import lucasdev.com.veggievibes.dto.user.UserUpdateDTO;
+import lucasdev.com.veggievibes.dto.user.*;
+import lucasdev.com.veggievibes.infra.security.TokenService;
 import lucasdev.com.veggievibes.repositories.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mindrot.jbcrypt.BCrypt;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -16,8 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,11 +28,16 @@ public class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
+    @Mock
+    private TokenService tokenService;
+
     User user;
 
     UserRequestDTO userRequestDTO;
 
     UserUpdateDTO userUpdateDTO;
+
+    LoginRequestDTO loginRequestDTO;
 
     @BeforeEach
     public void setup() {
@@ -43,12 +47,14 @@ public class UserServiceTest {
         this.user.setId("1");
         this.user.setName("Lucas");
         this.user.setEmail("lucas@gmail.com");
-        this.user.setPassword("12345678");
+        this.user.setPassword(BCrypt.hashpw("12345678", BCrypt.gensalt()));
         this.user.setRole("ADMIN");
 
         this.userRequestDTO = new UserRequestDTO(this.user.getName(), this.user.getEmail(), this.user.getPassword(), this.user.getPassword(), this.user.getRole());
 
         this.userUpdateDTO = new UserUpdateDTO(this.user.getName(), this.user.getPassword(), this.user.getPassword());
+
+        this.loginRequestDTO = new LoginRequestDTO("lucas@gmail.com", "12345678");
     }
 
     @Test
@@ -133,5 +139,25 @@ public class UserServiceTest {
         this.userService.delete("1");
 
         verify(userRepository).delete(user);
+    }
+
+
+    @Test
+    void shouldBeAbleToLoginUser() {
+        when(userRepository.findByEmail("lucas@gmail.com")).thenReturn(Optional.of(user));
+        when(tokenService.generateToken(any(User.class))).thenReturn("mockedToken");
+
+        LoginResponseDTO loginResponseDTO = userService.login(this.loginRequestDTO);
+
+        assertNotNull(loginResponseDTO.token());
+    }
+
+    @Test
+    void shouldThrowIncorrectLoginException() {
+        this.loginRequestDTO = new LoginRequestDTO("teste", "12345678");
+
+        assertThrows(IncorrectLoginException.class, () -> {
+            this.userService.login(this.loginRequestDTO);
+        });
     }
 }
