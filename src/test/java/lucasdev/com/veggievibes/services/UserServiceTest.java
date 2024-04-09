@@ -149,7 +149,6 @@ public class UserServiceTest {
         verify(userRepository).delete(user);
     }
 
-
     @Test
     void shouldBeAbleToLoginUser() {
         when(userRepository.findByEmail("lucas@gmail.com")).thenReturn(Optional.of(user));
@@ -167,5 +166,22 @@ public class UserServiceTest {
         assertThrows(IncorrectLoginException.class, () -> {
             this.userService.login(this.loginRequestDTO);
         });
+    }
+
+    @Test
+    void shouldBeAbleToValidateEmail() {
+        when(userRepository.findByEmail("lucas@gmail.com")).thenReturn(Optional.of(user));
+        when(tokenService.generateToken(any(User.class))).thenReturn("mockedToken");
+
+        var token = this.userService.login(this.loginRequestDTO).token();
+
+        when(userRepository.findByEmail("lucas@gmail.com")).thenReturn(Optional.of(user));
+        when(tokenService.validateToken(token)).thenReturn("lucas@gmail.com");
+
+        UserMessageDTO userMessageDTO = userService.validateEmail(token);
+
+        assertTrue(userMessageDTO.message().contains("Email validated successfully"));
+
+        assertTrue(user.isEmailValidated());
     }
 }

@@ -56,7 +56,7 @@ public class UserService {
                 userRequestDTO.email(),
                 "Validate Email",
                 "Veggie Vibes Team" +
-                        "\nPlease, make email validation on link: http://localhost:3000/user/" + token +
+                        "\nPlease, make email validation on link: http://localhost:3000/user/validate-email?token=" + token +
                         "\n The link have duration of 2 hours"
         );
 
@@ -103,6 +103,7 @@ public class UserService {
         this.userRepository.delete(user.get());
     }
 
+    @Transactional
     public LoginResponseDTO login(LoginRequestDTO loginRequestDTO) {
         User user = this.userRepository.findByEmail(loginRequestDTO.email()).orElseThrow(() -> new IncorrectLoginException("Email and/or Password Incorrects"));
 
@@ -110,6 +111,30 @@ public class UserService {
 
         String token = this.tokenService.generateToken(user);
 
+        if(user.isEmailValidated() == false) {
+            this.emailService.sendEmail(
+                    loginRequestDTO.email(),
+                    "Validate Email",
+                    "Veggie Vibes Team" +
+                            "\nPlease, make email validation on link: http://localhost:3000/user/validate-email?token=" + token +
+                            "\n The link have duration of 2 hours"
+            );
+        }
+
+
         return new LoginResponseDTO(token);
+    }
+
+    @Transactional
+    public UserMessageDTO validateEmail(String token) {
+        String subject = this.tokenService.validateToken(token);
+
+        User user = this.userRepository.findByEmail(subject)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        user.setEmailValidated(true);
+        this.userRepository.save(user);
+
+        return new UserMessageDTO("Email validated successfully");
     }
 }

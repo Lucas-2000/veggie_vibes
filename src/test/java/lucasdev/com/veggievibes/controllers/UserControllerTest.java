@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lucasdev.com.veggievibes.domain.user.User;
 import lucasdev.com.veggievibes.domain.user.exceptions.EmailAlreadyExistsException;
 import lucasdev.com.veggievibes.dto.user.*;
+import lucasdev.com.veggievibes.infra.security.TokenService;
 import lucasdev.com.veggievibes.services.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,12 +13,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Optional;
+
 import static org.hamcrest.Matchers.containsString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -31,6 +36,9 @@ public class UserControllerTest {
 
     @InjectMocks
     private UserController userController;
+
+    @Mock
+    private TokenService tokenService;
 
     MockMvc mockMvc;
 
@@ -125,6 +133,23 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(this.objectMapper.writeValueAsString(this.loginRequestDTO))
                 ).andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+    }
+
+    @Test
+    void UserController_ValidateEmail_Return200() throws Exception {
+        var token = this.tokenService.generateToken(this.user);
+
+        when(this.userService.validateEmail(token)).thenReturn(new UserMessageDTO("Email validated successfully"));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + token);
+
+        this.mockMvc.perform(patch("/users/login/validate-email")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .headers(headers)
+                )
+                .andExpect(MockMvcResultMatchers.status().isOk())
                 .andReturn();
     }
 }

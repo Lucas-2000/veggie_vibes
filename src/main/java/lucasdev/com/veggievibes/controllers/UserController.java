@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lucasdev.com.veggievibes.dto.user.*;
+import lucasdev.com.veggievibes.infra.security.TokenService;
 import lucasdev.com.veggievibes.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private TokenService tokenService;
 
     @Operation(description = "Create new user")
     @ApiResponses(value = {
@@ -70,7 +74,6 @@ public class UserController {
         return ResponseEntity.ok(userMessageDTO);
     }
 
-
     @Operation(description = "Login user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User logged succesfully"),
@@ -81,5 +84,18 @@ public class UserController {
         LoginResponseDTO LoginResponseDTO = this.userService.login(loginRequestDTO);
 
         return ResponseEntity.ok(LoginResponseDTO);
+    }
+
+    @Operation(description = "Validate Email")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Email validated succesfully"),
+    })
+    @PatchMapping("/login/validate-email")
+    public ResponseEntity<UserMessageDTO> validateEmail(@RequestHeader("Authorization") String authorizationHeader) {
+        String token = this.tokenService.extractTokenFromHeader(authorizationHeader);
+
+        UserMessageDTO userMessageDTO = this.userService.validateEmail(token);
+
+        return ResponseEntity.ok(userMessageDTO);
     }
 }
