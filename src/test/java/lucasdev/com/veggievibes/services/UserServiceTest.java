@@ -29,6 +29,9 @@ public class UserServiceTest {
     private UserService userService;
 
     @Mock
+    private EmailService emailService;
+
+    @Mock
     private TokenService tokenService;
 
     User user;
@@ -64,6 +67,11 @@ public class UserServiceTest {
         this.userService.create(this.userRequestDTO);
 
         verify(userRepository, times(1)).save(any());
+        verify(emailService, times(1)).sendEmail(
+                eq(this.userRequestDTO.email()),
+                eq("Validate Email"),
+                anyString()
+        );
     }
 
     @Test

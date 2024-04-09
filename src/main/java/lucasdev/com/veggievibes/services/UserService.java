@@ -21,6 +21,9 @@ public class UserService {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private EmailService emailService;
+
     @Transactional
     public UserIdDTO create(UserRequestDTO userRequestDTO) {
         var emailExists = this.userRepository.findByEmail(userRequestDTO.email());
@@ -46,6 +49,16 @@ public class UserService {
         newUser.setUpdatedAt(LocalDateTime.now());
 
         this.userRepository.save(newUser);
+
+        String token = this.tokenService.generateToken(newUser);
+
+        this.emailService.sendEmail(
+                userRequestDTO.email(),
+                "Validate Email",
+                "Veggie Vibes Team" +
+                        "\nPlease, make email validation on link: http://localhost:3000/user/" + token +
+                        "\n The link have duration of 2 hours"
+        );
 
         return new UserIdDTO(newUser.getId());
     }
