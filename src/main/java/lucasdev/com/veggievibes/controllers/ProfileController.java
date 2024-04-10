@@ -5,15 +5,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lucasdev.com.veggievibes.dto.profile.ProfileIdDTO;
 import lucasdev.com.veggievibes.dto.profile.ProfileRequestDTO;
+import lucasdev.com.veggievibes.dto.profile.ProfileResponseDTO;
 import lucasdev.com.veggievibes.dto.user.UserIdDTO;
 import lucasdev.com.veggievibes.dto.user.UserRequestDTO;
+import lucasdev.com.veggievibes.dto.user.UserResponseDTO;
 import lucasdev.com.veggievibes.services.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
@@ -36,5 +35,17 @@ public class ProfileController {
         var uri = UriComponentsBuilder.fromPath("/profiles/{id}").buildAndExpand(profileIdDTO.id()).toUri();
 
         return ResponseEntity.created(uri).body(profileIdDTO);
+    }
+
+    @Operation(description = "Find Profile By User Id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Profile Found"),
+            @ApiResponse(responseCode = "404", description = "Profile Not Found"),
+    })
+    @GetMapping("/user/{id}")
+    public ResponseEntity<ProfileResponseDTO> findProfileByUserId(@PathVariable String id) {
+        var user = this.profileService.findProfileByUserId(id);
+
+        return ResponseEntity.ok(user);
     }
 }
