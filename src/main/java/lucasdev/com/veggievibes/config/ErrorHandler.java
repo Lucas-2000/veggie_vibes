@@ -1,5 +1,7 @@
 package lucasdev.com.veggievibes.config;
 
+import lucasdev.com.veggievibes.domain.profile.exceptions.InvalidCPFFormatException;
+import lucasdev.com.veggievibes.domain.profile.exceptions.ProfileAlreadyExistsException;
 import lucasdev.com.veggievibes.domain.user.exceptions.*;
 import lucasdev.com.veggievibes.dto.general.ErrorResponseDTO;
 import org.springframework.http.HttpStatus;
@@ -38,5 +40,15 @@ public class ErrorHandler {
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity handleUserNotFound(UserNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponseDTO(exception.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidCPFFormatException.class)
+    public ResponseEntity handleInvalidCPFFormat(InvalidCPFFormatException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDTO(exception.getMessage()));
+    }
+
+    @ExceptionHandler(ProfileAlreadyExistsException.class)
+    public ResponseEntity handleProfileAlreadyExists(ProfileAlreadyExistsException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDTO(exception.getMessage()));
     }
 }
