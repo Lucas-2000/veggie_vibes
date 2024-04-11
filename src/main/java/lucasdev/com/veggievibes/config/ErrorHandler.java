@@ -1,5 +1,8 @@
 package lucasdev.com.veggievibes.config;
 
+import lucasdev.com.veggievibes.domain.juridic_profile.exceptions.CNPJAlreadyExistsException;
+import lucasdev.com.veggievibes.domain.juridic_profile.exceptions.InvalidCNPJFormatException;
+import lucasdev.com.veggievibes.domain.juridic_profile.exceptions.JuridicProfileAlreadyExistsException;
 import lucasdev.com.veggievibes.domain.profile.exceptions.CPFAlreadyExistsException;
 import lucasdev.com.veggievibes.domain.profile.exceptions.InvalidCPFFormatException;
 import lucasdev.com.veggievibes.domain.profile.exceptions.ProfileAlreadyExistsException;
@@ -61,6 +64,21 @@ public class ErrorHandler {
 
     @ExceptionHandler(CPFAlreadyExistsException.class)
     public ResponseEntity handleCPFAlreadyExists(CPFAlreadyExistsException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDTO(exception.getMessage()));
+    }
+
+    @ExceptionHandler(JuridicProfileAlreadyExistsException.class)
+    public ResponseEntity handleJuridicProfileAlreadyExists(JuridicProfileAlreadyExistsException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDTO(exception.getMessage()));
+    }
+
+    @ExceptionHandler(CNPJAlreadyExistsException.class)
+    public ResponseEntity handleCNPJAlreadyExists(CNPJAlreadyExistsException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDTO(exception.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidCNPJFormatException.class)
+    public ResponseEntity handleInvalidCNPJFormat(InvalidCNPJFormatException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDTO(exception.getMessage()));
     }
 }

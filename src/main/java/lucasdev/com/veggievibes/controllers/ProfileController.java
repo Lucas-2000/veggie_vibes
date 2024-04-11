@@ -26,7 +26,7 @@ public class ProfileController {
     @Operation(description = "Create new profile")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Profile created succesfully"),
-            @ApiResponse(responseCode = "400", description = "User already have profile | Invalid CPF format, the correct is XXX.XXX.XXX-XX"),
+            @ApiResponse(responseCode = "400", description = "User already have profile | Invalid CPF format, the correct is XXX.XXX.XXX-XX | Invalid user role, needs to be USER"),
             @ApiResponse(responseCode = "404", description = "User not found"),
     })
     @PostMapping
@@ -53,7 +53,7 @@ public class ProfileController {
     @Operation(description = "Update profile")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Profile Found"),
-            @ApiResponse(responseCode = "400", description = "Invalid CPF format, the correct is XXX.XXX.XXX-XX | CPF already exists"),
+            @ApiResponse(responseCode = "400", description = "Invalid CPF format, the correct is XXX.XXX.XXX-XX | CPF already exists in another profile"),
             @ApiResponse(responseCode = "404", description = "Profile Not Found"),
     })
     @PatchMapping("/{id}")

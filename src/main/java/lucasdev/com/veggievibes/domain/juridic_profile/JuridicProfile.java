@@ -26,51 +26,51 @@ public class JuridicProfile {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(nullable = false)
-    private String legal_name;
+    @Column(name = "legal_name", nullable = false)
+    private String legalName;
 
-    @Column(nullable = false, length = 18, unique = true)
+    @Column(nullable = false, unique = true)
     private String cnpj;
 
-    @Column()
-    private String state_registration;
+    @Column(name = "state_registration")
+    private String stateRegistration;
 
-    @Column()
-    private String trade_name;
+    @Column(name = "trade_name")
+    private String tradeName;
 
-    @Column()
-    private String activity_sector;
+    @Column(name = "activity_sector")
+    private String activitySector;
 
-    @Column()
-    private String commercial_address;
+    @Column(name = "commercial_address")
+    private String commercialAddress;
 
-    @Column()
-    private String commercial_phone;
+    @Column(name = "commercial_phone")
+    private String commercialPhone;
 
     @Column()
     private String website;
 
-    @Column()
-    private String commercial_email;
+    @Column(name = "commercial_email")
+    private String commercialEmail;
 
-    @Column()
-    private String company_description;
+    @Column(name = "company_description")
+    private String companyDescription;
 
-    @Column()
-    private String company_logo;
+    @Column(name = "company_logo")
+    private String companyLogo;
 
-    @Column()
-    private String legal_representative_contact_name;
+    @Column(name = "legal_representative_contact_name")
+    private String legalRepresentativeContactName;
 
-    @Column()
-    private String legal_representative_contact_email;
+    @Column(name = "legal_representative_contact_email")
+    private String legalRepresentativeContactEmail;
 
-    @Column()
-    private String legal_representative_contact_phone;
+    @Column(name = "legal_representative_contact_phone")
+    private String legalRepresentativeContactPhone;
 
-    @Column(nullable = false)
-    private LocalDateTime created_at;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
-    @Column(nullable = false)
-    private LocalDateTime updated_at;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 }

@@ -17,5 +17,5 @@ CREATE TABLE juridic_profiles (
     legal_representative_contact_phone VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT juridic_profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES juridic_profiles(id) ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT juridic_profiles_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
 );

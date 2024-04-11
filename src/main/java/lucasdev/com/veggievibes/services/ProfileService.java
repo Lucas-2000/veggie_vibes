@@ -39,8 +39,6 @@ public class ProfileService {
 
         if(profileExists.isPresent()) throw new ProfileAlreadyExistsException("User already have profile");
 
-        if(profileRequestDTO.cpf().equals(profileExists.get().getCpf())) throw new CPFAlreadyExistsException("CPF already exists");
-
         if(!userExists.getRole().equals("USER")) throw new InvalidRoleException("Invalid user role, needs to be USER");
 
         if(!profileRequestDTO.cpf().matches(REGEX_CPF)) throw new InvalidCPFFormatException("Invalid CPF format, the correct is XXX.XXX.XXX-XX");
@@ -55,6 +53,8 @@ public class ProfileService {
         newProfile.setCity(profileRequestDTO.city());
         newProfile.setState(profileRequestDTO.state());
         newProfile.setPostalCode(profileRequestDTO.postalCode());
+        newProfile.setCreatedAt(LocalDateTime.now());
+        newProfile.setUpdatedAt(LocalDateTime.now());
 
         this.profileRepository.save(newProfile);
 
