@@ -1,6 +1,7 @@
 package lucasdev.com.veggievibes.services;
 
 import lucasdev.com.veggievibes.domain.profile.Profile;
+import lucasdev.com.veggievibes.domain.profile.exceptions.CPFAlreadyExistsException;
 import lucasdev.com.veggievibes.domain.profile.exceptions.InvalidCPFFormatException;
 import lucasdev.com.veggievibes.domain.profile.exceptions.ProfileAlreadyExistsException;
 import lucasdev.com.veggievibes.domain.profile.exceptions.ProfileNotFoundException;
@@ -37,6 +38,8 @@ public class ProfileService {
         var profileExists = this.profileRepository.findByUserId(profileRequestDTO.userId());
 
         if(profileExists.isPresent()) throw new ProfileAlreadyExistsException("User already have profile");
+
+        if(profileRequestDTO.cpf().equals(profileExists.get().getCpf())) throw new CPFAlreadyExistsException("CPF already exists");
 
         if(!userExists.getRole().equals("USER")) throw new InvalidRoleException("Invalid user role, needs to be USER");
 
@@ -90,7 +93,15 @@ public class ProfileService {
 
         if(!profileUpdateDTO.cpf().matches(REGEX_CPF)) throw new InvalidCPFFormatException("Invalid CPF format, the correct is XXX.XXX.XXX-XX");
 
-        profile.get().setCpf(profileUpdateDTO.cpf());
+        if (!profileUpdateDTO.cpf().equals(profile.get().getCpf())) {
+            Optional<Profile> existingProfile = this.profileRepository.findByCpf(profileUpdateDTO.cpf());
+            if (existingProfile.isPresent()) {
+                throw new CPFAlreadyExistsException("CPF already exists in another profile");
+            }
+
+            profile.get().setCpf(profileUpdateDTO.cpf());
+        }
+
         profile.get().setFirstName(profileUpdateDTO.firstName());
         profile.get().setLastName(profileUpdateDTO.lastName());
         profile.get().setPhoneNumber(profileUpdateDTO.phoneNumber());

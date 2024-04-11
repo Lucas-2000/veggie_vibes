@@ -1,5 +1,6 @@
 package lucasdev.com.veggievibes.config;
 
+import lucasdev.com.veggievibes.domain.profile.exceptions.CPFAlreadyExistsException;
 import lucasdev.com.veggievibes.domain.profile.exceptions.InvalidCPFFormatException;
 import lucasdev.com.veggievibes.domain.profile.exceptions.ProfileAlreadyExistsException;
 import lucasdev.com.veggievibes.domain.profile.exceptions.ProfileNotFoundException;
@@ -55,6 +56,11 @@ public class ErrorHandler {
 
     @ExceptionHandler(ProfileAlreadyExistsException.class)
     public ResponseEntity handleProfileAlreadyExists(ProfileAlreadyExistsException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDTO(exception.getMessage()));
+    }
+
+    @ExceptionHandler(CPFAlreadyExistsException.class)
+    public ResponseEntity handleCPFAlreadyExists(CPFAlreadyExistsException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDTO(exception.getMessage()));
     }
 }

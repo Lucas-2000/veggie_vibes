@@ -53,7 +53,7 @@ public class ProfileController {
     @Operation(description = "Update profile")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Profile Found"),
-            @ApiResponse(responseCode = "400", description = "Invalid CPF format, the correct is XXX.XXX.XXX-XX"),
+            @ApiResponse(responseCode = "400", description = "Invalid CPF format, the correct is XXX.XXX.XXX-XX | CPF already exists"),
             @ApiResponse(responseCode = "404", description = "Profile Not Found"),
     })
     @PatchMapping("/{id}")
