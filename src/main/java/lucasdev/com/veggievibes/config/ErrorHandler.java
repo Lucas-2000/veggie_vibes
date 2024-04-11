@@ -3,6 +3,7 @@ package lucasdev.com.veggievibes.config;
 import lucasdev.com.veggievibes.domain.juridic_profile.exceptions.CNPJAlreadyExistsException;
 import lucasdev.com.veggievibes.domain.juridic_profile.exceptions.InvalidCNPJFormatException;
 import lucasdev.com.veggievibes.domain.juridic_profile.exceptions.JuridicProfileAlreadyExistsException;
+import lucasdev.com.veggievibes.domain.juridic_profile.exceptions.JuridicProfileNotFoundException;
 import lucasdev.com.veggievibes.domain.profile.exceptions.CPFAlreadyExistsException;
 import lucasdev.com.veggievibes.domain.profile.exceptions.InvalidCPFFormatException;
 import lucasdev.com.veggievibes.domain.profile.exceptions.ProfileAlreadyExistsException;
@@ -80,5 +81,10 @@ public class ErrorHandler {
     @ExceptionHandler(InvalidCNPJFormatException.class)
     public ResponseEntity handleInvalidCNPJFormat(InvalidCNPJFormatException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDTO(exception.getMessage()));
+    }
+
+    @ExceptionHandler(JuridicProfileNotFoundException.class)
+    public ResponseEntity handleJuridicProfileNotFound(JuridicProfileNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponseDTO(exception.getMessage()));
     }
 }

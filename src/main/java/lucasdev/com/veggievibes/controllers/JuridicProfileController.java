@@ -5,15 +5,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lucasdev.com.veggievibes.dto.juridic_profile.JuridicProfileIdDTO;
 import lucasdev.com.veggievibes.dto.juridic_profile.JuridicProfileRequestDTO;
-import lucasdev.com.veggievibes.dto.profile.ProfileIdDTO;
-import lucasdev.com.veggievibes.dto.profile.ProfileRequestDTO;
+import lucasdev.com.veggievibes.dto.juridic_profile.JuridicProfileResponseDTO;
 import lucasdev.com.veggievibes.services.JuridicProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
@@ -36,5 +32,17 @@ public class JuridicProfileController {
         var uri = UriComponentsBuilder.fromPath("/juridic-profiles/{id}").buildAndExpand(juridicProfileIdDTO.id()).toUri();
 
         return ResponseEntity.created(uri).body(juridicProfileIdDTO);
+    }
+
+    @Operation(description = "Find Juridic Profile By User Id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Juridic Profile Found"),
+            @ApiResponse(responseCode = "404", description = "Juridic Profile Not Found"),
+    })
+    @GetMapping("/user/{id}")
+    public ResponseEntity<JuridicProfileResponseDTO> findJuridicProfileByUserId(@PathVariable String id) {
+        var user = this.juridicProfileService.findJuridicProfileByUserId(id);
+
+        return ResponseEntity.ok(user);
     }
 }
