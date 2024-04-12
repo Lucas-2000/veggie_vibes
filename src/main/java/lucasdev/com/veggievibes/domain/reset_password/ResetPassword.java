@@ -42,7 +42,7 @@ public class ResetPassword {
 
     public ResetPassword() {
         this.token = generateToken();
-        this.expiresAt = getExpiresAt();
+        this.expiresAt = setExpiresAt();
     }
 
     private static String generateToken() {
@@ -51,7 +51,7 @@ public class ResetPassword {
         return token.toString();
     }
 
-    private static Integer getExpiresAt() {
+    private static Integer setExpiresAt() {
         LocalDateTime now = LocalDateTime.now();
 
         LocalDateTime expires = now.plusHours(1);

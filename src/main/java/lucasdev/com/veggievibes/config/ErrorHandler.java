@@ -8,6 +8,8 @@ import lucasdev.com.veggievibes.domain.profile.exceptions.CPFAlreadyExistsExcept
 import lucasdev.com.veggievibes.domain.profile.exceptions.InvalidCPFFormatException;
 import lucasdev.com.veggievibes.domain.profile.exceptions.ProfileAlreadyExistsException;
 import lucasdev.com.veggievibes.domain.profile.exceptions.ProfileNotFoundException;
+import lucasdev.com.veggievibes.domain.reset_password.exceptions.InvalidTokenTimeException;
+import lucasdev.com.veggievibes.domain.reset_password.exceptions.ResetPasswordNotFoundException;
 import lucasdev.com.veggievibes.domain.user.exceptions.*;
 import lucasdev.com.veggievibes.dto.general.ErrorResponseDTO;
 import org.springframework.http.HttpStatus;
@@ -86,5 +88,15 @@ public class ErrorHandler {
     @ExceptionHandler(JuridicProfileNotFoundException.class)
     public ResponseEntity handleJuridicProfileNotFound(JuridicProfileNotFoundException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponseDTO(exception.getMessage()));
+    }
+
+    @ExceptionHandler(ResetPasswordNotFoundException.class)
+    public ResponseEntity handleResetPasswordNotFound(ResetPasswordNotFoundException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponseDTO(exception.getMessage()));
+    }
+
+    @ExceptionHandler(InvalidTokenTimeException.class)
+    public ResponseEntity handleInvalidTokenTime(InvalidTokenTimeException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDTO(exception.getMessage()));
     }
 }
