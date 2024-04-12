@@ -8,6 +8,7 @@ import lombok.Setter;
 import lucasdev.com.veggievibes.domain.user.User;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
@@ -51,13 +52,15 @@ public class ResetPassword {
     }
 
     private static Integer getExpiresAt() {
-        LocalDateTime localDateTime = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now();
 
-        LocalDateTime expiresAt = localDateTime.plus(1, ChronoUnit.HOURS);
+        LocalDateTime expires = now.plusHours(1);
 
-        Integer expiresAtTimestamp = (int) expiresAt.toEpochSecond(java.time.ZoneOffset.UTC);
+        System.out.println(expires);
 
-        return expiresAtTimestamp;
+        long expiresEpochSeconds = expires.atZone(ZoneId.of("America/Sao_Paulo")).toInstant().getEpochSecond();
+
+        return (int)expiresEpochSeconds;
     }
 
 }
