@@ -12,9 +12,9 @@ O Veggie Vibes é uma plataforma online dedicada a oferecer uma experiência de 
 - Postgres;
 
 ## Requisitos Funcionais:
-- [ ] Cadastro de Usuários: Os usuários podem se cadastrar no Veggie Vibes fornecendo informações básicas como nome, endereço de e-mail e senha.
+- [x] Cadastro de Usuários: Os usuários podem se cadastrar no Veggie Vibes fornecendo informações básicas como nome, endereço de e-mail e senha.
 
-- [ ] Autenticação de Usuários: Os usuários devem poder fazer login utilizando suas credenciais previamente cadastradas.
+- [x] Autenticação de Usuários: Os usuários devem poder fazer login utilizando suas credenciais previamente cadastradas.
 
 - [ ] Cadastro de Vendedores: Os vendedores podem se cadastrar no Veggie Vibes fornecendo informações adicionais, como dados da empresa e informações de contato.
 
@@ -34,7 +34,7 @@ O Veggie Vibes é uma plataforma online dedicada a oferecer uma experiência de 
 
 - [ ] Backend deverá ser feito em Spring.
 
-- [ ] Backend deverá ser feito em Angular.
+- [ ] Backend deverá ser feito em Vue.
 
 - [ ] O sistema deve ser documentado a partir do Swagger.
 
