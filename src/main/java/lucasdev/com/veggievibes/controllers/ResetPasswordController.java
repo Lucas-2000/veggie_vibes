@@ -3,9 +3,7 @@ package lucasdev.com.veggievibes.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import lucasdev.com.veggievibes.dto.reset_password.ResetPasswordRequestDTO;
-import lucasdev.com.veggievibes.dto.reset_password.ResetPasswordTokenDTO;
-import lucasdev.com.veggievibes.dto.reset_password.ResetPasswordValidateDTO;
+import lucasdev.com.veggievibes.dto.reset_password.*;
 import lucasdev.com.veggievibes.services.ResetPasswordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +42,20 @@ public class ResetPasswordController {
         ResetPasswordValidateDTO resetPasswordValidateDTO = this.resetPasswordService.validate(token);
 
         return ResponseEntity.ok(resetPasswordValidateDTO);
+    }
+
+
+    @Operation(description = "Reset Password")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User password reseted succesfully"),
+            @ApiResponse(responseCode = "400", description = "Password and RePassword length must be higher than 7 characters | Password and RePassword must be equals"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+    })
+    @PatchMapping("/reset")
+    public ResponseEntity<ResetPasswordMessageDTO> reset(@RequestBody ResetPasswordUpdateDTO resetPasswordUpdateDTO) {
+        ResetPasswordMessageDTO resetPasswordMessageDTO = this.resetPasswordService.reset(resetPasswordUpdateDTO);
+
+        return ResponseEntity.ok(resetPasswordMessageDTO);
     }
 
 }

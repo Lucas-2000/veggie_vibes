@@ -5,9 +5,8 @@ import lucasdev.com.veggievibes.domain.reset_password.exceptions.InvalidTokenTim
 import lucasdev.com.veggievibes.domain.reset_password.exceptions.ResetPasswordNotFoundException;
 import lucasdev.com.veggievibes.domain.user.User;
 import lucasdev.com.veggievibes.domain.user.exceptions.UserNotFoundException;
-import lucasdev.com.veggievibes.dto.reset_password.ResetPasswordRequestDTO;
-import lucasdev.com.veggievibes.dto.reset_password.ResetPasswordTokenDTO;
-import lucasdev.com.veggievibes.dto.reset_password.ResetPasswordValidateDTO;
+import lucasdev.com.veggievibes.dto.reset_password.*;
+import lucasdev.com.veggievibes.dto.user.UserUpdateDTO;
 import lucasdev.com.veggievibes.repositories.ResetPasswordRepository;
 import lucasdev.com.veggievibes.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +29,9 @@ public class ResetPasswordService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
 
     @Transactional
     public ResetPasswordTokenDTO generate(ResetPasswordRequestDTO resetPasswordRequestDTO) {
@@ -75,6 +77,19 @@ public class ResetPasswordService {
         return new ResetPasswordValidateDTO(true);
     }
 
-    public void reset() {}
+    @Transactional
+    public ResetPasswordMessageDTO reset(ResetPasswordUpdateDTO resetPasswordUpdateDTO) {
+        if(!validate(resetPasswordUpdateDTO.token()).isValid()) throw new InvalidTokenTimeException("Token is expired");;
+
+        Optional<User> userExists = this.userRepository.findByEmail(resetPasswordUpdateDTO.email());
+
+        if(userExists.isEmpty()) throw new UserNotFoundException("User not found");
+
+        UserUpdateDTO userUpdateDTO = new UserUpdateDTO(userExists.get().getName(), resetPasswordUpdateDTO.password(), resetPasswordUpdateDTO.rePassword());
+
+        this.userService.update(userExists.get().getId(), userUpdateDTO);
+
+        return new ResetPasswordMessageDTO("User password reseted succesfully");
+    }
 
 }
